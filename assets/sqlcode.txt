@@ -1,0 +1,18 @@
+-- Staff Database Schema
+CREATE TABLE staff (
+  staff_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  first_name VARCHAR(50) NOT NULL,
+  middle_name VARCHAR(50),
+  last_name VARCHAR(50) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
+  address VARCHAR(200) NOT NULL,
+  city VARCHAR(50) NOT NULL,
+  state VARCHAR(50) NOT NULL,
+  zipcode VARCHAR(10) NOT NULL,
+  role ENUM('Admin', 'Teller', 'Loan Officer', 'Manager') NOT NULL,
+  salary DECIMAL(10,2) NOT NULL,
+  hire_date DATE NOT NULL,
+  PRIMARY KEY (staff_id)
+);
