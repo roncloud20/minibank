@@ -1,87 +1,83 @@
 <?php
-// Start a session to store user data
-session_start();
+  // Start a session to store user data
+  session_start();
 
-// Check if the user is already logged in
-// if (isset($_SESSION['user_id'])) {
-//   // Redirect to the home page or dashboard
-//   header('Location: index.php');
-//   exit();
-// }
+  // Check if the user is already logged in
+  // if (isset($_SESSION['user_id'])) {
+  //   // Redirect to the home page or dashboard
+  //   header('Location: index.php');
+  //   exit();
+  // }
+  include 'assets/header.php';
 
-// Include the database connection
-include 'db_connect.php';
+  // Include the database connection
+  include 'assets/db_connect.php';
 
-// Initialize variables for the form fields
-$first_name = '';
-$middle_name = '';
-$last_name = '';
-$email = '';
-$password = '';
-$phone_number = '';
-$address = '';
-$city = '';
-$state = '';
-$zipcode = '';
-$role = '';
-$salary = '';
-$hire_date = '';
+  // Initialize variables for the form fields
+  $first_name = '';
+  $middle_name = '';
+  $last_name = '';
+  $email = '';
+  $password = '';
+  $phone_number = '';
+  $address = '';
+  // $city = '';
+  $state = '';
+  // $zipcode = '';
+  $role = '';
+  // $salary = '';
+  $hire_date = '';
 
-// Define an error message variable
-$error_message = '';
+  // Define an error message variable
+  $error_message = '';
 
-// Check if the form has been submitted
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  // Validate and sanitize the input data
-  $first_name = trim($_POST['first_name']);
-  $middle_name = trim($_POST['middle_name']);
-  $last_name = trim($_POST['last_name']);
-  $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-  $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-  $phone_number = trim($_POST['phone_number']);
-  $address = trim($_POST['address']);
-  $city = trim($_POST['city']);
-  $state = trim($_POST['state']);
-  $zipcode = trim($_POST['zipcode']);
-  $role = $_POST['role'];
-  $salary = floatval($_POST['salary']);
-  $hire_date = $_POST['hire_date'];
+  // Check if the form has been submitted
+  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Validate and sanitize the input data
+    $first_name = trim($_POST['first_name']);
+    $middle_name = trim($_POST['middle_name']);
+    $last_name = trim($_POST['last_name']);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $phone_number = trim($_POST['phone_number']);
+    $address = trim($_POST['address']);
+    // $city = trim($_POST['city']);
+    $state = trim($_POST['state']);
+    // $zipcode = trim($_POST['zipcode']);
+    $role = $_POST['role'];
+    // $salary = floatval($_POST['salary']);
+    $hire_date = $_POST['hire_date'];
 
-  // Check if the email address is already in use
-  $query = "SELECT COUNT(*) AS count FROM staff WHERE email = '$email'";
-  $result = mysqli_query($conn, $query);
-  $row = mysqli_fetch_assoc($result);
-  if ($row['count'] > 0) {
-    $error_message = 'The email address is already in use.';
-  } else {
-    // Insert the new staff member into the database
-    $query = "INSERT INTO staff (first_name, middle_name, last_name, email, password, phone_number, address, city, state, zipcode, role, salary, hire_date) VALUES ('$first_name', '$middle_name', '$last_name', '$email', '$password', '$phone_number', '$address', '$city', '$state', '$zipcode', '$role', $salary, '$hire_date')";
+    // Check if the email address is already in use
+    $query = "SELECT COUNT(*) AS count FROM staff WHERE email = '$email'";
     $result = mysqli_query($conn, $query);
-    if ($result) {
-      // Redirect to the login page or dashboard
-      header('Location: login.php');
-      exit();
+    $row = mysqli_fetch_assoc($result);
+    if ($row['count'] > 0) {
+      $error_message = 'The email address is already in use.';
     } else {
-      $error_message = 'An error occurred while registering the staff member.';
+      // Insert the new staff member into the database
+      $query = "INSERT INTO staff (first_name, middle_name, last_name, email, password, phone_number, address, state, role, hire_date) 
+      VALUES ('$first_name', '$middle_name', '$last_name', '$email', '$password', '$phone_number', '$address', '$state', '$role', '$hire_date')";
+      $result = mysqli_query($conn, $query);
+      if ($result) {
+        // Redirect to the login page or dashboard
+        header('Location: login.php');
+        exit();
+      } else {
+        $error_message = 'An error occurred while registering the staff member.';
+      }
     }
   }
-}
 
-// Close the database connection
-mysqli_close($conn);
+  // Close the database connection
+  mysqli_close($conn);
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Staff Registration</title>
-</head>
-<body>
+<main>
   <h1>Staff Registration</h1>
   <?php if ($error_message): ?>
     <p><?php echo $error_message; ?></p>
   <?php endif; ?>
-  <form method="post">
+  <form id="allforms" method="post">
     <div>
       <label for="first_name">First Name:</label>
       <input type="text" name="first_name" value="<?php echo $first_name; ?>" required>
@@ -110,62 +106,62 @@ mysqli_close($conn);
       <label for="address">Address:</label>
       <input type="text" name="address" value="<?php echo $address; ?>" required>
     </div>
-    <div>
+    <!-- <div>
       <label for="city">City:</label>
-      <input type="text" name="city" value="<?php echo $city; ?>" required>
-    </div>
+      <input type="text" name="city" value="<?php // echo $city; ?>" required>
+    </div> -->
     <div>
       <label for="state">State:</label>
-        <select name="state" id="state">
-            <option value="Abia">Abia</option>
-            <option value="Adamawa">Adamawa</option>
-            <option value="Akwa Ibom">Akwa Ibom</option>
-            <option value="Anambra">Anambra</option>
-            <option value="Bauchi">Bauchi</option>
-            <option value="Bayelsa">Bayelsa</option>
-            <option value="Benue">Benue</option>
-            <option value="Borno">Borno</option>
-            <option value="Cross River">Cross River</option>
-            <option value="Delta">Delta</option>
-            <option value="Ebonyi">Ebonyi</option>
-            <option value="Edo">Edo</option>
-            <option value="Ekiti">Ekiti</option>
-            <option value="Enugu">Enugu</option>
-            <option value="FCT">FCT</option>
-            <option value="Gombe">Gombe</option>
-            <option value="Imo">Imo</option>
-            <option value="Jigawa">Jigawa</option>
-            <option value="Kaduna">Kaduna</option>
-            <option value="Kano">Kano</option>
-            <option value="Katsina">Katsina</option>
-            <option value="Kebbi">Kebbi</option>
-            <option value="Kogi">Kogi</option>
-            <option value="Kwara">Kwara</option>
-            <option value="Lagos" selected>Lagos</option>
-            <option value="Nasarawa">Nasarawa</option>
-            <option value="Niger">Niger</option>
-            <option value="Ogun">Ogun</option>
-            <option value="Ondo">Ondo</option>
-            <option value="Osun">Osun</option>
-            <option value="Oyo">Oyo</option>
-            <option value="Plateau">Plateau</option>
-            <option value="Rivers">Rivers</option>
-            <option value="Sokoto">Sokoto</option>
-            <option value="Taraba">Taraba</option>
-            <option value="Yobe">Yobe</option>
-            <option value="Zamfara">Zamfara</option>
-        </select>
+      <select name="state" id="state">
+        <option value="Abia">Abia</option>
+        <option value="Adamawa">Adamawa</option>
+        <option value="Akwa Ibom">Akwa Ibom</option>
+        <option value="Anambra">Anambra</option>
+        <option value="Bauchi">Bauchi</option>
+        <option value="Bayelsa">Bayelsa</option>
+        <option value="Benue">Benue</option>
+        <option value="Borno">Borno</option>
+        <option value="Cross River">Cross River</option>
+        <option value="Delta">Delta</option>
+        <option value="Ebonyi">Ebonyi</option>
+        <option value="Edo">Edo</option>
+        <option value="Ekiti">Ekiti</option>
+        <option value="Enugu">Enugu</option>
+        <option value="FCT">FCT</option>
+        <option value="Gombe">Gombe</option>
+        <option value="Imo">Imo</option>
+        <option value="Jigawa">Jigawa</option>
+        <option value="Kaduna">Kaduna</option>
+        <option value="Kano">Kano</option>
+        <option value="Katsina">Katsina</option>
+        <option value="Kebbi">Kebbi</option>
+        <option value="Kogi">Kogi</option>
+        <option value="Kwara">Kwara</option>
+        <option value="Lagos">Lagos</option>
+        <option value="Nasarawa">Nasarawa</option>
+        <option value="Niger">Niger</option>
+        <option value="Ogun">Ogun</option>
+        <option value="Ondo">Ondo</option>
+        <option value="Osun">Osun</option>
+        <option value="Oyo">Oyo</option>
+        <option value="Plateau">Plateau</option>
+        <option value="Rivers">Rivers</option>
+        <option value="Sokoto">Sokoto</option>
+        <option value="Taraba">Taraba</option>
+        <option value="Yobe">Yobe</option>
+        <option value="Zamfara">Zamfara</option>
+      </select>
     </div>
     <div>
-    <label for="lga">Local Government Area:</label>
-        <select name="lga" id="lga">
+      <label for="lga">Local Government Area:</label>
+      <select name="lga" id="lga">
         <option value="">-- Select LGA --</option>
-    </select>
+      </select>
     </div>
-    <div>
+    <!-- <div>
       <label for="zipcode">Zipcode:</label>
-      <input type="text" name="zipcode" value="<?php echo $zipcode; ?>" required>
-    </div>
+      <input type="text" name="zipcode" value="<?php // echo $zipcode; ?>" required>
+    </div> -->
     <div>
       <label for="role">Role:</label>
       <select name="role" required>
@@ -176,10 +172,10 @@ mysqli_close($conn);
         <option value="Manager"<?php if ($role == 'Manager') { echo ' selected'; } ?>>Manager</option>
       </select>
     </div>
-    <div>
+    <!-- <div>
       <label for="salary">Salary:</label>
-      <input type="number" name="salary" min="0" step="0.01" value="<?php echo $salary; ?>" required>
-    </div>
+      <input type="number" name="salary" min="0" step="0.01" value="<?php // echo $salary; ?>" required>
+    </div> -->
     <div>
       <label for="hire_date">Hire Date:</label>
       <input type="date" name="hire_date" value="<?php echo $hire_date; ?>" required>
@@ -188,8 +184,7 @@ mysqli_close($conn);
       <input type="submit" value="Register">
     </div>
   </form>
-</body>
-</html>
+</main>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function() {
